@@ -28,19 +28,20 @@ class GridDataset(Dataset):
 
     def __init__(self,type_):
         s=os.getcwd()
-        Images_path=s+'/coco_np/'+('{}_data.npy'.format(type_))
-        Labels_path=s+'/coco_np/'+('{}_label.npy'.format(type_))
+        Images_path=s+'/coco/'+('{}/img.npy'.format(type_))
+        Labels_path=s+'/coco/'+('{}/lbl.npy'.format(type_))
         if os.path.isfile(Images_path) and os.path.isfile(Labels_path):
             self.imgs=np.load(Images_path)
+            #self.imgs = np.divide(self.imgs, 255)
             self.imgs = self.imgs[:1000]
             self.imgs = self.imgs.astype(np.float16)
             self.lbls=np.load(Labels_path)
             self.lbls = self.lbls[:1000]
             self.lbls = self.lbls.astype(np.float16)
-            print(self.imgs.shape)
-            self.imgs = np.moveaxis(self.imgs, 1, -1)
-            self.lbls = np.moveaxis(self.lbls, 1, -1)
-            print(self.imgs.shape)
+            #self.lbls[self.lbls < 128] = 0
+            #self.lbls[self.lbls > 128] = 1
+            #print(self.lbls)
+            #print(self.lbls)
             print("Data Successfully Loaded into CPU")
         else:
             Images_path=s+'/membrane/'+type_+'/aug/'

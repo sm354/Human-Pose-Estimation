@@ -83,18 +83,24 @@ def train(model, device, train_loader, optimizer, epoch):
         loss.backward()
         optimizer.step()
         trloss+=loss.item()
+        #if batch_idx % 100 == 0:
         #print(loss.item())
-        #print(output)
-        #print(target)
+        
+        '''if(batch_idx % 100 == 0):
+            print("------------------------------------DATA-----------------------------------")
+            #print(data.shape)
+            print(data)
+            print("------------------------------------OUTPUT-----------------------------------")
+            #print(output.shape)
+            print(output)
+            print("------------------------------------TARGET-----------------------------------")
+            #print(target.shape)
+            print(target)'''
 
-        for n in range(target.shape[0]):
-            for i in range(target.shape[2]):
-                for j in range(target.shape[3]):
-                    if target[n,0,i,j]==1:
-                        total_ones+=1
-                        if output[n,0,i,j]>=0.5:
-                            output_ones+=1
         t = Variable(torch.Tensor([0.5])).cuda()  # threshold
+        k = Variable(torch.Tensor([1])).cuda()  # threshold
+        total_ones = (target > t).sum()
+        output_ones = (output > t).sum()
         output = (output > t).float() * 1
         tp += (output * target).sum().to(torch.float32)
         fp += ((1 - output) * target).sum().to(torch.float32)
@@ -110,6 +116,7 @@ def train(model, device, train_loader, optimizer, epoch):
     trloss/=(batch_idx+1)
     tracc=100.*f1
     print('TrainLoss={} TrainAcc={}'.format(trloss, tracc))
+    print(f'Output Ones: {output_ones}, Total Ones: {total_ones}')
     return trloss, tracc
 
 
@@ -120,6 +127,7 @@ def test(model,device,test_loader,best_acc, exp_name, out = False):
     fp = 0
     fn = 0
     output_ones=0
+    output_im = []
     with torch.no_grad():
         k = 0
         for batch_idx, (data, target) in enumerate(test_loader):
@@ -132,23 +140,28 @@ def test(model,device,test_loader,best_acc, exp_name, out = False):
             #print(loss.item())
             #print(output)
             #print(target)
+            k = output * 255
+            k = np.array(k.cpu(), dtype = np.uint8)
+            #print(k.shape)
+            #print(k[0].shape)
+            for i in range(len(k)):
+                output_im.append(k[i])
 
-            for n in range(target.shape[0]):
-                '''if out :
-                    data = tensor_to_image(output[n][:][:][0])
-                    data.save("{}.png".format(k))
-                    k += 1'''
-                '''for i in range(target.shape[2]):
-                    for j in range(target.shape[3]):
-                        if target[n,0,i,j]>=0.7:
-                            total_ones+=1
-                            if output[n,0,i,j]>=0.7:
-                                output_ones+=1'''
             t = Variable(torch.Tensor([0.5])).cuda()  # threshold
+            k = Variable(torch.Tensor([1])).cuda()  # threshold
+            total_ones = (target > t).sum()
+            output_ones = (output > t).sum()
             output = (output > t).float() * 1
             tp += (output * target).sum().to(torch.float32)
             fp += ((1 - output) * target).sum().to(torch.float32)
             fn += (output * (1 - target)).sum().to(torch.float32)
+        
+    if(out):
+        #print(len(output_im))
+        #print(output_im[0].shape)
+        output_im = np.array(output_im)
+        #print(output_im.shape)
+        np.save('./{}.npy'.format(exp_name), output_im)
 
     epsilon = 1e-7
 
@@ -162,27 +175,29 @@ def test(model,device,test_loader,best_acc, exp_name, out = False):
     #print(total_ones)
     tstacc=100.*f1
 
+    
     if tstacc > best_acc:
-        torch.save(model.state_dict(), '{}.pth'.format(exp_name))
+        torch.save(model.module.state_dict(), '{}.pth'.format(exp_name))
         best_acc = tstacc
 
     print('TestLoss={} TestAcc={}'.format(test_loss, tstacc))
+    print(f'Output Ones: {output_ones}, Total Ones: {total_ones}')
     return test_loss, tstacc, best_acc
 
 def main():
-    exp_name='1'
-    batch_size=10
-    test_batch_size=10
-    epochs=5
-    lr=0.1
+    exp_name='lr.01ep1000'
+    batch_size=50
+    test_batch_size=50
+    epochs=1000
+    lr=0.01
     best_acc=float(0)
     
     print("Preparing DATASET --------")
-    data_train=GridDataset('train')
-    data_test=GridDataset('test')
+    data_train = GridDataset('Train')
+    data_test = GridDataset('Test')
     kwargs={'num_workers': 8, 'pin_memory': True} if torch.cuda.is_available() else {}
-    train_loader=torch.utils.data.DataLoader(data_train,batch_size=batch_size,shuffle=True, **kwargs)
-    test_loader=torch.utils.data.DataLoader(data_test,batch_size=test_batch_size,shuffle=True, **kwargs)
+    train_loader=torch.utils.data.DataLoader(data_train,batch_size=batch_size,shuffle=False, **kwargs)
+    test_loader=torch.utils.data.DataLoader(data_test,batch_size=test_batch_size,shuffle=False, **kwargs)
 
     print("Prepared DATASET ---------\n")
 
@@ -216,13 +231,14 @@ def main():
         else:
             L, A, best_acc = test(net, device, test_loader, best_acc, exp_name)
         trloss.append(l)
-        trAcc.append(a)
+        trAcc.append(a.cpu())
         teloss.append(L)
-        teAcc.append(A)
+        teAcc.append(A.cpu())
         print(trloss[-1], trAcc[-1])
         print(teloss[-1], teAcc[-1])
 	
-    Save_Stats(trloss, trAcc.cpu(), teloss, teAcc.cpu(), exp_name)
+    Save_Stats(trloss, trAcc, teloss, teAcc, exp_name)
         
 if __name__=='__main__':
     main()
+    print("Completed!")
