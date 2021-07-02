@@ -26,17 +26,15 @@ class GridDataset(Dataset):
 # COCO has both b/w and rgb images
 # In numpy, only rgb stored
 
-    def __init__(self,type_):
+    def __init__(self,type_, address):
         s=os.getcwd()
-        Images_path=s+'/coco/'+('{}/img.npy'.format(type_))
-        Labels_path=s+'/coco/'+('{}/lbl.npy'.format(type_))
+        Images_path=address + f"/{type_}_img.npy"
+        Labels_path=address + f"/{type_}_lbl.npy"
         if os.path.isfile(Images_path) and os.path.isfile(Labels_path):
             self.imgs=np.load(Images_path)
             #self.imgs = np.divide(self.imgs, 255)
-            self.imgs = self.imgs[:1000]
             self.imgs = self.imgs.astype(np.float16)
             self.lbls=np.load(Labels_path)
-            self.lbls = self.lbls[:1000]
             self.lbls = self.lbls.astype(np.float16)
             #self.lbls[self.lbls < 128] = 0
             #self.lbls[self.lbls > 128] = 1
@@ -44,34 +42,47 @@ class GridDataset(Dataset):
             #print(self.lbls)
             print("Data Successfully Loaded into CPU")
         else:
-            Images_path=s+'/membrane/'+type_+'/aug/'
-            Labels_path=s+'/membrane/'+type_+'/aug_label/'
+            Images_path=address + "/Images/"
+            Labels_path=address + "/Labels/"
             Imgs=os.listdir(Images_path)
             Lbls=os.listdir(Labels_path)
-            Imgs.remove(".DS_Store")
+            #Imgs.remove(".DS_Store")
             self.imgs=[]
             self.lbls=[]
-            #print(Imgs)
-            for img in Imgs:
-                if(type_ == "train"):
-                    im=Image.open(Images_path+img)
-                    lb=Image.open(Labels_path+"mask"+img[5:]) # label and image name same
-                    #print(Labels_path+"mask"+img[5:])
-                else:
-                    im = Image.open(Images_path + img)
-                    lb = Image.open(Labels_path + img[:-4] + "_predict" + img[-4:])  # label and image name same
-                    #print(Labels_path + img[:-4] + "_predict" + img[-4:])
 
+            if(type_ == "Train"):
+                Imgs = Imgs[:int(0.7*len(Imgs))]
+                Lbls = Lbls[:int(0.7*len(Lbls))]
+            elif(type_ == "Val"):
+                Imgs = Imgs[int(0.7*len(Imgs)):int(0.9*len(Imgs))]
+                Lbls = Lbls[int(0.7*len(Lbls)):int(0.9*len(Lbls))]
+            else:
+                Imgs = Imgs[int(0.9*len(Imgs)):]
+                Lbls = Lbls[int(0.9*len(Lbls)):]
+
+            #print(Imgs)
+            #i = 0
+            #print(len(Imgs[0]))
+            for img in Imgs:
+                #if(type_ == "Train"):
+                im=Image.open(Images_path+img)
+                lb=Image.open(Labels_path+img) # label and image name same
+                    #print(Labels_path+"mask"+img[5:])
+                    #print(Labels_path + img[:-4] + "_predict" + img[-4:])
+                #print(im.size)
                 im=np.array(im.resize((128,128)))
                 lb=np.array(lb.resize((128,128)))
+                    #self.imgs.append(im)
+	                #self.lbls.append(lb)
+                
+                #print(im.shape)
+                if im.shape == (128,128,3) or im.shape == (128,128,1):
+                    #print("here", im.shape)
+                    self.imgs.append(im)
+                    self.lbls.append(lb)
+                #print(i)
 
-                #print(im)
-                #print(lb)
-                if im.shape == (128,128):
-	                self.imgs.append(im)
-	                self.lbls.append(lb)
-
-            print(len(self.imgs))
+            #print(len(self.imgs))
             self.imgs=np.array(self.imgs)
             self.lbls=np.array(self.lbls)
             #self.imgs = np.divide(self.imgs, 255)
@@ -79,8 +90,8 @@ class GridDataset(Dataset):
             #print(self.imgs)
             #print(self.lbls)
             print("{}: size = {}, imgs[0] shape= {}".format(type_,self.imgs.shape[0], self.imgs[0].shape))
-            np.save(s+'/membrane/{}/aug.npy'.format(type_), self.imgs)
-            np.save(s+'/membrane/{}/aug_label.npy'.format(type_), self.lbls)
+            np.save(address + f"/{type_}_img.npy", self.imgs)
+            np.save(address + f"/{type_}_lbl.npy", self.lbls)
             
         '''
         self.imgs_path = s+'/Coco/DS1/'+type_+'/Images/'

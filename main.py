@@ -1,6 +1,8 @@
 import sys
-
-from Unet import UNet
+import argparse
+from models.Unet import UNet
+from models.resUnet_plpl import ResUnetPlusPlus
+from models.attenUnet import AttU_Net
 import torch
 from torch.autograd import Variable
 import torch.nn as nn
@@ -47,7 +49,7 @@ def SavePlots(y1, y2, metric, exp_name):
     plt.ylabel(metric)
     epochs=np.arange(1,len(y1)+1,1)
     plt.plot(epochs,y1,label='train{}'.format(metric))
-    plt.plot(epochs,y2,label='test{}'.format(metric))
+    plt.plot(epochs,y2,label='val{}'.format(metric))
     if metric=='acc':
         ep=np.argmax(y2)
         plt.plot(ep,y2[ep],'r*',label='bestacc@({},{})'.format(ep,y2[ep]))
@@ -79,6 +81,10 @@ def train(model, device, train_loader, optimizer, epoch):
         #print(target.shape)
         optimizer.zero_grad()
         output = model(data)
+        #print(type(output))
+        #print(type(target))
+        #print(output.shape)
+        #print(target.shape)
         loss=F.binary_cross_entropy(output,target)
         loss.backward()
         optimizer.step()
@@ -116,11 +122,11 @@ def train(model, device, train_loader, optimizer, epoch):
     trloss/=(batch_idx+1)
     tracc=100.*f1
     print('TrainLoss={} TrainAcc={}'.format(trloss, tracc))
-    print(f'Output Ones: {output_ones}, Total Ones: {total_ones}')
+    #print(f'Output Ones: {output_ones}, Total Ones: {total_ones}')
     return trloss, tracc
 
 
-def test(model,device,test_loader,best_acc, exp_name, out = False):
+def test(model,device,val_loader,best_acc, exp_name, out = False):
     test_loss=0
     total_ones=0
     tp = 0
@@ -130,7 +136,7 @@ def test(model,device,test_loader,best_acc, exp_name, out = False):
     output_im = []
     with torch.no_grad():
         k = 0
-        for batch_idx, (data, target) in enumerate(test_loader):
+        for batch_idx, (data, target) in enumerate(val_loader):
             data, target = data.to(device), target.to(device)
             #print(data.shape)
             #print(target.shape)
@@ -181,32 +187,47 @@ def test(model,device,test_loader,best_acc, exp_name, out = False):
         best_acc = tstacc
 
     print('TestLoss={} TestAcc={}'.format(test_loss, tstacc))
-    print(f'Output Ones: {output_ones}, Total Ones: {total_ones}')
+    #print(f'Output Ones: {output_ones}, Total Ones: {total_ones}')
     return test_loss, tstacc, best_acc
 
 def main():
-    exp_name='lr.01ep1000'
+    parser = argparse.ArgumentParser()
+    print("hi")
+    parser.add_argument("-n", "--one", required = True, help = "Name of experiment")
+    parser.add_argument("-a", "--two", required = True, help = "Address of data")
+    parser.add_argument("-e", "--three", required = True, help = "Number of epochs")
+    parser.add_argument("-m", "--four", required = True, help = "Choose the model:\n 1 for Unet, 2 for ResUnet++, 3 for Attention Unet.")
+    print("parsing")
+    args = vars(parser.parse_args())
+    print("parsed")
+    print(args)
+    exp_name=args['one']
     batch_size=50
     test_batch_size=50
-    epochs=1000
+    epochs=int(args['three'])
     lr=0.01
     best_acc=float(0)
     
     print("Preparing DATASET --------")
-    data_train = GridDataset('Train')
-    data_test = GridDataset('Test')
+    data_train = GridDataset('Train', args['two'])
+    data_test = GridDataset('Val', args['two'])
     kwargs={'num_workers': 8, 'pin_memory': True} if torch.cuda.is_available() else {}
     train_loader=torch.utils.data.DataLoader(data_train,batch_size=batch_size,shuffle=False, **kwargs)
-    test_loader=torch.utils.data.DataLoader(data_test,batch_size=test_batch_size,shuffle=False, **kwargs)
+    val_loader=torch.utils.data.DataLoader(data_test,batch_size=test_batch_size,shuffle=False, **kwargs)
 
     print("Prepared DATASET ---------\n")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    '''for batch_idx, (data, target) in enumerate(test_loader):
+    '''for batch_idx, (data, target) in enumerate(val_loader):
         data, target = data.to(device), target.to(device)
         print(data)
         print(target)'''
-    net = UNet(in_channels=3, n_classes=1, padding=True).to(device)
+    if(args['four'] == 1):
+        net = UNet(in_channels = 3, n_classes = 1).to(device)
+    if(args['four'] == 2):
+        net = ResUnetPlusPlus(channel = 3).to(device)
+    if(args['four'] == 3):
+        net = AttU_Net(img_ch = 3, out_ch=1).to(device)
     if torch.cuda.device_count() > 1:
         print("Let's use", torch.cuda.device_count(), "GPUs!")
         net = nn.DataParallel(net, device_ids=[0,1])
@@ -227,17 +248,27 @@ def main():
         print("\n Epoch: {}".format(epoch))
         l,a=train(net, device, train_loader, optimizer, epoch)
         if(epoch == epochs):
-            L,A,best_acc=test(net, device, test_loader,best_acc, exp_name, True)
+            L,A,best_acc=test(net, device, val_loader,best_acc, exp_name, True)
         else:
-            L, A, best_acc = test(net, device, test_loader, best_acc, exp_name)
+            L, A, best_acc = test(net, device, val_loader, best_acc, exp_name)
+
+        if(best_acc > 96):
+            optimizer = optim.SGD(net.parameters(), lr = 0.001, momentum = 0.9)
         trloss.append(l)
         trAcc.append(a.cpu())
         teloss.append(L)
         teAcc.append(A.cpu())
-        print(trloss[-1], trAcc[-1])
-        print(teloss[-1], teAcc[-1])
+        #print(trloss[-1], trAcc[-1])
+        #print(teloss[-1], teAcc[-1])
 	
     Save_Stats(trloss, trAcc, teloss, teAcc, exp_name)
+
+    testD = GridDataset("Test", args['two'])
+    test_loader = torch.utils.data.DataLoader(testD, batch_size=batch_size, shuffle=False, **kwargs)
+    net.module.load_state_dict(torch.load(f'./{exp_name}.pth'))
+    L, A, acc = test(net, device, test_loader, best_acc, exp_name)
+
+    print(f'Test Set Accuracy: {A.cpu()}, Loss: {L}')
         
 if __name__=='__main__':
     main()
