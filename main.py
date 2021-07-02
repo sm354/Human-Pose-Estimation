@@ -1,25 +1,26 @@
+import os
 import sys
 import argparse
-from models.Unet import UNet
-from models.resUnet_plpl import ResUnetPlusPlus
-from models.attenUnet import AttU_Net
+import PIL.Image as Image
+import numpy as np
+import matplotlib.pyplot as plt
+
 import torch
-from torch.autograd import Variable
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import torch.backends.cudnn as cudnn
 import torchvision.transforms as transforms
-torch.set_printoptions(profile="full")
-
+from torch.autograd import Variable
 from torch.utils.data import Dataset, DataLoader
-from CheckerBoard import *
 
-import PIL.Image as Image
-import numpy as np
-import matplotlib.pyplot as plt
+from utils.CheckerBoard import *
+from models.Unet import UNet
+from models.resUnet_plpl import ResUnetPlusPlus
+from models.attenUnet import AttU_Net
+
+torch.set_printoptions(profile="full")
 np.set_printoptions(threshold=sys.maxsize)
-import os
 
 def tensor_to_image(tensor):
     tensor = tensor*255
@@ -32,10 +33,8 @@ def tensor_to_image(tensor):
     shape = tensor.shape
     tensor[tensor < 0.5*255] = 0
     tensor[tensor >= 0.5*255] = 255
-        # then assign white to the pixel
 
-
-    print(tensor)
+    # print(tensor)
     return Image.fromarray(tensor)
 
 def SavePlots(y1, y2, metric, exp_name):
@@ -209,8 +208,8 @@ def main():
     best_acc=float(0)
     
     print("Preparing DATASET --------")
-    data_train = GridDataset('Train', args['two'])
-    data_test = GridDataset('Val', args['two'])
+    data_train = CheckerBoard('Train', args['two'])
+    data_test = CheckerBoard('Val', args['two'])
     kwargs={'num_workers': 8, 'pin_memory': True} if torch.cuda.is_available() else {}
     train_loader=torch.utils.data.DataLoader(data_train,batch_size=batch_size,shuffle=False, **kwargs)
     val_loader=torch.utils.data.DataLoader(data_test,batch_size=test_batch_size,shuffle=False, **kwargs)
@@ -263,7 +262,7 @@ def main():
 	
     Save_Stats(trloss, trAcc, teloss, teAcc, exp_name)
 
-    testD = GridDataset("Test", args['two'])
+    testD = CheckerBoard("Test", args['two'])
     test_loader = torch.utils.data.DataLoader(testD, batch_size=batch_size, shuffle=False, **kwargs)
     net.module.load_state_dict(torch.load(f'./{exp_name}.pth'))
     L, A, acc = test(net, device, test_loader, best_acc, exp_name)
