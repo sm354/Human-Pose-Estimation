@@ -1,20 +1,27 @@
-import mask
+import cocoapi.PythonAPI.pycocotools.mask as mask
+from cocoapi.PythonAPI.pycocotools.coco import COCO
 import argparse
-from coco import COCO
 import numpy as np
 import PIL.Image as Image
 import os
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-a", "--one", required = True, help = "Address of Pattern images")
+parser.add_argument("--patterns_path", required = True, help = "Address of Checkerboard Pattern images")
+parser.add_argument("--annotations_path", required = True, help = "Address of annotations.json")
+parser.add_argument("--images_path", required = True, help = "Address of coco train images")
+parser.add_argument("--dataset_path", required = True, help = "Address to save Checkerboard Dataset")
+args = vars(parser.parse_args())
 
-args= vars(parser.parse_args())
-
-patterns_path = args['one']
+patterns_path = args['patterns_path']
 patterns = os.listdir(patterns_path)
 number = -1
 
-annFile='annotations.json'
+if not os.path.exists(args['dataset_path']):
+        os.mkdir(args['dataset_path'])
+        os.mkdir(args['dataset_path']+'/Images')
+        os.mkdir(args['dataset_path']+'/Labels')
+
+annFile=args['annotations_path']
 coco=COCO(annFile) # COCO is a class in COCO API
 
 # get annotations for all images that belong to super category-person
@@ -35,10 +42,9 @@ for i, ant in enumerate(ants): # ant : annotation
         if i%500 == 0: #each pattern will be pasted on 116 images : total imgs = 60*500 ~ 30000
                 number += 1 
 
-        #try:
         image_name = coco.loadImgs([image_id])[0]['file_name']
         pattern_name = patterns[number]
-        image = Image.open('./images/'+image_name)
+        image = Image.open(os.path.join(args['images_path'], image_name))
         pattern = (Image.open(patterns_path+pattern_name)).resize(image.size)
         binary_mask = Image.fromarray(255*coco.annToMask(ant))
 
@@ -47,20 +53,11 @@ for i, ant in enumerate(ants): # ant : annotation
                 error_ants += 1
                 continue
 
-
-        # binary_mask.save('label.jpg')
         image.paste(pattern, mask = binary_mask)
-        # image.save('image.jpg')
-        image.save('./Data_Filtered/Images/'+str(i)+'.jpg')
-        binary_mask.save('./Data_Filtered/Labels/'+str(i)+'.jpg')
+        image.save(os.path.join(args['dataset_path'], 'Images', str(i)+'.jpg'))
+        binary_mask.save(os.path.join(args['dataset_path'], 'Labels', str(i)+'.jpg'))
         image_count+=1
-        print("success")
 
-        '''except Exception as e:
-                print("Exception '{}' occured for imageId, annotationId - {}, {}".format(e, image_id, ant['id']))
-                exception_count += 1
-                pass
-'''
 print("\ntotal annotations observed = {}".format(i))
 print("total images(with labels) created = {}".format(image_count))
 print("error anntations encountered = {}".format(error_ants))
