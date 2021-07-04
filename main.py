@@ -38,22 +38,16 @@ def tensor_to_image(tensor):
     return Image.fromarray(tensor)
 
 def SavePlots(y1, y2, metric, exp_name):
-    try:
-        plt.clf()
-    except Exception as e:
-        pass
-    plt.style.use('seaborn')
-    plt.title('{}'.format(exp_name))
+    plt.figure()
+    title_ = f'{exp_name}' + '| Acc=%.2f'%(y2[-1]) if metric=='acc' else f'{exp_name}'
+    plt.title(title_)
     plt.xlabel('epochs')
     plt.ylabel(metric)
-    epochs=np.arange(1,len(y1)+1,1)
-    plt.plot(epochs,y1,label='train{}'.format(metric))
-    plt.plot(epochs,y2,label='val{}'.format(metric))
-    if metric=='acc':
-        ep=np.argmax(y2)
-        plt.plot(ep,y2[ep],'r*',label='bestacc@({},{})'.format(ep,y2[ep]))
+    plt.plot(epochs,y1,label=f'train{metric}')
+    plt.plot(epochs,y2,label=f'val{metric}')
+    plt.grid()
     plt.legend()
-    plt.savefig('{}_{}'.format(exp_name,metric), dpi=95)
+    plt.savefig(f'{exp_name}_{metric}' + '.png')
 
 def Save_Stats(trainloss, trainacc, testloss, testacc, exp_name):
     data=[]
