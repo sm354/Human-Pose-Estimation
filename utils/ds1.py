@@ -1,10 +1,16 @@
 import mask
+import argparse
 from coco import COCO
 import numpy as np
 import PIL.Image as Image
 import os
 
-patterns_path = 'Filtered/'
+parser = argparse.ArgumentParser()
+parser.add_argument("-a", "--one", required = True, help = "Address of Pattern images")
+
+args= vars(parser.parse_args())
+
+patterns_path = args['one']
 patterns = os.listdir(patterns_path)
 number = -1
 

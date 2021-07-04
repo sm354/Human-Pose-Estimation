@@ -10,6 +10,7 @@ import imageio
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import random
 class GridDataset(Dataset):
 # Downsampling 4 times => 16 times downsampled img in unet 
 
@@ -50,20 +51,27 @@ class GridDataset(Dataset):
             self.imgs=[]
             self.lbls=[]
 
-            if(type_ == "Train"):
-                Imgs = Imgs[:int(0.7*len(Imgs))]
-                Lbls = Lbls[:int(0.7*len(Lbls))]
-            elif(type_ == "Val"):
-                Imgs = Imgs[int(0.7*len(Imgs)):int(0.9*len(Imgs))]
-                Lbls = Lbls[int(0.7*len(Lbls)):int(0.9*len(Lbls))]
-            else:
-                Imgs = Imgs[int(0.9*len(Imgs)):]
-                Lbls = Lbls[int(0.9*len(Lbls)):]
+            temp = list(zip(Imgs, Lbls))
+            random.shuffle(temp)
+            Imgs, Lbls = zip(*temp)
+            
+            tri = Imgs[:int(0.7*len(Imgs))]
+            trl = Lbls[:int(0.7*len(Lbls))]
+        
+            vai = Imgs[int(0.7*len(Imgs)):int(0.9*len(Imgs))]
+            val = Lbls[int(0.7*len(Lbls)):int(0.9*len(Lbls))]
+        
+            tei = Imgs[int(0.9*len(Imgs)):]
+            tel = Lbls[int(0.9*len(Lbls)):]
 
+            val_i = []
+            val_l = []
+            test_i = []
+            test_l = []
             #print(Imgs)
             #i = 0
             #print(len(Imgs[0]))
-            for img in Imgs:
+            for img in tri:
                 #if(type_ == "Train"):
                 im=Image.open(Images_path+img)
                 lb=Image.open(Labels_path+img) # label and image name same
@@ -80,18 +88,62 @@ class GridDataset(Dataset):
                     #print("here", im.shape)
                     self.imgs.append(im)
                     self.lbls.append(lb)
+            
+            for img in vai:
+                #if(type_ == "Train"):
+                im=Image.open(Images_path+img)
+                lb=Image.open(Labels_path+img) # label and image name same
+                    #print(Labels_path+"mask"+img[5:])
+                    #print(Labels_path + img[:-4] + "_predict" + img[-4:])
+                #print(im.size)
+                im=np.array(im.resize((128,128)))
+                lb=np.array(lb.resize((128,128)))
+                    #self.imgs.append(im)
+	                #self.lbls.append(lb)
+                
+                #print(im.shape)
+                if im.shape == (128,128,3) or im.shape == (128,128,1):
+                    #print("here", im.shape)
+                    val_i.append(im)
+                    val_l.append(lb)
+            
+            for img in tei:
+                #if(type_ == "Train"):
+                im=Image.open(Images_path+img)
+                lb=Image.open(Labels_path+img) # label and image name same
+                    #print(Labels_path+"mask"+img[5:])
+                    #print(Labels_path + img[:-4] + "_predict" + img[-4:])
+                #print(im.size)
+                im=np.array(im.resize((128,128)))
+                lb=np.array(lb.resize((128,128)))
+                    #self.imgs.append(im)
+	                #self.lbls.append(lb)
+                
+                #print(im.shape)
+                if im.shape == (128,128,3) or im.shape == (128,128,1):
+                    #print("here", im.shape)
+                    test_i.append(im)
+                    test_l.append(lb)
                 #print(i)
 
             #print(len(self.imgs))
             self.imgs=np.array(self.imgs)
             self.lbls=np.array(self.lbls)
+            val_i = np.array(val_i)
+            val_l = np.array(val_l)
+            test_i = np.array(test_i)
+            test_l = np.array(test_l)
             #self.imgs = np.divide(self.imgs, 255)
             #self.lbls = np.divide(self.lbls, 140).astype("uint8")
             #print(self.imgs)
             #print(self.lbls)
             print("{}: size = {}, imgs[0] shape= {}".format(type_,self.imgs.shape[0], self.imgs[0].shape))
-            np.save(address + f"/{type_}_img.npy", self.imgs)
-            np.save(address + f"/{type_}_lbl.npy", self.lbls)
+            np.save(address + f"/Train_img.npy", self.imgs)
+            np.save(address + f"/Train_lbl.npy", self.lbls)
+            np.save(address + f"/Val_img.npy", val_i)
+            np.save(address + f"/Val_lbl.npy", val_l)
+            np.save(address + f"/Test_img.npy", test_i)
+            np.save(address + f"/Test_lbl.npy", test_l)
             
         '''
         self.imgs_path = s+'/Coco/DS1/'+type_+'/Images/'

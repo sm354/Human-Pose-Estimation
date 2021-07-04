@@ -126,7 +126,7 @@ def train(model, device, train_loader, optimizer, epoch):
     return trloss, tracc
 
 
-def test(model,device,val_loader,best_acc, exp_name, out = False):
+def test(model,device,val_loader,best_acc, scheduler, exp_name, out = True):
     test_loss=0
     total_ones=0
     tp = 0
@@ -161,13 +161,6 @@ def test(model,device,val_loader,best_acc, exp_name, out = False):
             tp += (output * target).sum().to(torch.float32)
             fp += ((1 - output) * target).sum().to(torch.float32)
             fn += (output * (1 - target)).sum().to(torch.float32)
-        
-    if(out):
-        #print(len(output_im))
-        #print(output_im[0].shape)
-        output_im = np.array(output_im)
-        #print(output_im.shape)
-        np.save('./{}.npy'.format(exp_name), output_im)
 
     epsilon = 1e-7
 
@@ -181,6 +174,8 @@ def test(model,device,val_loader,best_acc, exp_name, out = False):
     #print(total_ones)
     tstacc=100.*f1
 
+    if(out):
+        scheduler.step(test_loss)
     
     if tstacc > best_acc:
         torch.save(model.module.state_dict(), '{}.pth'.format(exp_name))
@@ -238,6 +233,7 @@ def main():
     net.to(device)
 
     optimizer = optim.SGD(net.parameters(), lr=lr, momentum = 0.9)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer)
 
     print("Model Prepared; Starting Training ...")
     trloss=[]
@@ -248,12 +244,10 @@ def main():
         print("\n Epoch: {}".format(epoch))
         l,a=train(net, device, train_loader, optimizer, epoch)
         if(epoch == epochs):
-            L,A,best_acc=test(net, device, val_loader,best_acc, exp_name, True)
+            L,A,best_acc=test(net, device, val_loader,best_acc, scheduler, exp_name)
         else:
-            L, A, best_acc = test(net, device, val_loader, best_acc, exp_name)
+            L, A, best_acc = test(net, device, val_loader, best_acc, scheduler, exp_name)
 
-        if(best_acc > 96):
-            optimizer = optim.SGD(net.parameters(), lr = 0.001, momentum = 0.9)
         trloss.append(l)
         trAcc.append(a.cpu())
         teloss.append(L)
@@ -266,7 +260,7 @@ def main():
     testD = GridDataset("Test", args['two'])
     test_loader = torch.utils.data.DataLoader(testD, batch_size=batch_size, shuffle=False, **kwargs)
     net.module.load_state_dict(torch.load(f'./{exp_name}.pth'))
-    L, A, acc = test(net, device, test_loader, best_acc, exp_name)
+    L, A, acc = test(net, device, test_loader, best_acc, scheduler, exp_name, False)
 
     print(f'Test Set Accuracy: {A.cpu()}, Loss: {L}')
         

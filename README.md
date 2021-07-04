@@ -22,6 +22,20 @@ The model used for training the model is UNet. Multiple models were tried like R
         * `-n` : Name of the project
         * `-e` : Number of epochs
         * `-a` : Address of the folder which contains the Data.
+        * `-m` : The model you want to use to train. 1 for Unet, 2 for ResUnet++ and 3 for Attention Unet.
+
+4. ) DataAugmentation.py :
+    * The script applies brightness change, contrast change and saturation change on the pattern images.
+
+5. ) image_zoomOut.py :
+    * The patterns that are obtained after augmentation are placed in a 2 x 2 matrix and the same pattern is pasted at each index. 
+    * Then the resulting image is resized to the same size as that of the original pattern.
+
+6. ) ds1.py:
+    * This script pastes the patterns on the raw images of `COCO` dataset.
+    * To run this script,
+        
+            python3 ds1.py -a /path/to/Pattern/folder/ 
         
 
 ----
