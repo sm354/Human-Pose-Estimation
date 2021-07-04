@@ -39,7 +39,7 @@ def tensor_to_image(tensor):
 
 def SavePlots(y1, y2, metric, exp_name):
     plt.figure()
-    title_ = f'{exp_name}' + '| Acc=%.2f'%(y2[-1]) if metric=='acc' else f'{exp_name}'
+    title_ = f'{exp_name}' + '| Acc=%.2f'%(np.max(y2)) if metric=='acc' else f'{exp_name}'
     plt.title(title_)
     plt.xlabel('epochs')
     plt.ylabel(metric)
