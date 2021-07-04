@@ -34,22 +34,21 @@ Parameters
         note: models like UNet downsamples the image by factor of 16, hence size to be chosen wisely
 
 """
-    def __init__(self,type_, address, size=128):
+    def __init__(self,type_, address):
         s=os.getcwd()
         Images_path=address + f"/{type_}_img.npy"
         Labels_path=address + f"/{type_}_lbl.npy"
-        
         if os.path.isfile(Images_path) and os.path.isfile(Labels_path):
             self.imgs=np.load(Images_path)
-            self.lbls=np.load(Labels_path)
-            
+            #self.imgs = np.divide(self.imgs, 255)
             self.imgs = self.imgs.astype(np.float16)
+            self.lbls=np.load(Labels_path)
             self.lbls = self.lbls.astype(np.float16)
             #self.lbls[self.lbls < 128] = 0
             #self.lbls[self.lbls > 128] = 1
             #print(self.lbls)
             #print(self.lbls)
-        
+            print("Data Successfully Loaded into CPU")
         else:
             Images_path=address + "/Images/"
             Labels_path=address + "/Labels/"
@@ -59,34 +58,106 @@ Parameters
             self.imgs=[]
             self.lbls=[]
 
-            if(type_ == "Train"):
-                Imgs = Imgs[:int(0.7*len(Imgs))]
-                Lbls = Lbls[:int(0.7*len(Lbls))]
-            elif(type_ == "Val"):
-                Imgs = Imgs[int(0.7*len(Imgs)):int(0.9*len(Imgs))]
-                Lbls = Lbls[int(0.7*len(Lbls)):int(0.9*len(Lbls))]
-            else:
-                Imgs = Imgs[int(0.9*len(Imgs)):]
-                Lbls = Lbls[int(0.9*len(Lbls)):]
+            temp = list(zip(Imgs, Lbls))
+            random.shuffle(temp)
+            Imgs, Lbls = zip(*temp)
+            
+            tri = Imgs[:int(0.7*len(Imgs))]
+            trl = Lbls[:int(0.7*len(Lbls))]
+        
+            vai = Imgs[int(0.7*len(Imgs)):int(0.9*len(Imgs))]
+            val = Lbls[int(0.7*len(Lbls)):int(0.9*len(Lbls))]
+        
+            tei = Imgs[int(0.9*len(Imgs)):]
+            tel = Lbls[int(0.9*len(Lbls)):]
 
-            for img in Imgs:
-                # label and image name same
+            val_i = []
+            val_l = []
+            test_i = []
+            test_l = []
+            #print(Imgs)
+            #i = 0
+            #print(len(Imgs[0]))
+            for img in tri:
+                #if(type_ == "Train"):
                 im=Image.open(Images_path+img)
-                lb=Image.open(Labels_path+img) 
-
-                im=np.array(im.resize((size,size)))
-                lb=np.array(lb.resize((size,size)))
+                lb=Image.open(Labels_path+img) # label and image name same
+                    #print(Labels_path+"mask"+img[5:])
+                    #print(Labels_path + img[:-4] + "_predict" + img[-4:])
+                #print(im.size)
+                im=np.array(im.resize((128,128)))
+                lb=np.array(lb.resize((128,128)))
+                    #self.imgs.append(im)
+	                #self.lbls.append(lb)
                 
-                if im.shape == (size,size,3) or im.shape == (size,size,1):
+                #print(im.shape)
+                if im.shape == (128,128,3) or im.shape == (128,128,1):
+                    #print("here", im.shape)
                     self.imgs.append(im)
                     self.lbls.append(lb)
+            
+            for img in vai:
+                #if(type_ == "Train"):
+                im=Image.open(Images_path+img)
+                lb=Image.open(Labels_path+img) # label and image name same
+                    #print(Labels_path+"mask"+img[5:])
+                    #print(Labels_path + img[:-4] + "_predict" + img[-4:])
+                #print(im.size)
+                im=np.array(im.resize((128,128)))
+                lb=np.array(lb.resize((128,128)))
+                    #self.imgs.append(im)
+	                #self.lbls.append(lb)
+                
+                #print(im.shape)
+                if im.shape == (128,128,3) or im.shape == (128,128,1):
+                    #print("here", im.shape)
+                    val_i.append(im)
+                    val_l.append(lb)
+            
+            for img in tei:
+                #if(type_ == "Train"):
+                im=Image.open(Images_path+img)
+                lb=Image.open(Labels_path+img) # label and image name same
+                    #print(Labels_path+"mask"+img[5:])
+                    #print(Labels_path + img[:-4] + "_predict" + img[-4:])
+                #print(im.size)
+                im=np.array(im.resize((128,128)))
+                lb=np.array(lb.resize((128,128)))
+                    #self.imgs.append(im)
+	                #self.lbls.append(lb)
+                
+                #print(im.shape)
+                if im.shape == (128,128,3) or im.shape == (128,128,1):
+                    #print("here", im.shape)
+                    test_i.append(im)
+                    test_l.append(lb)
+                #print(i)
 
+            #print(len(self.imgs))
             self.imgs=np.array(self.imgs)
             self.lbls=np.array(self.lbls)
-
-            np.save(address + f"/{type_}_img.npy", self.imgs)
-            np.save(address + f"/{type_}_lbl.npy", self.lbls)
+            val_i = np.array(val_i)
+            val_l = np.array(val_l)
+            test_i = np.array(test_i)
+            test_l = np.array(test_l)
+            #self.imgs = np.divide(self.imgs, 255)
+            #self.lbls = np.divide(self.lbls, 140).astype("uint8")
+            #print(self.imgs)
+            #print(self.lbls)
+            print("{}: size = {}, imgs[0] shape= {}".format(type_,self.imgs.shape[0], self.imgs[0].shape))
+            np.save(address + f"/Train_img.npy", self.imgs)
+            np.save(address + f"/Train_lbl.npy", self.lbls)
+            np.save(address + f"/Val_img.npy", val_i)
+            np.save(address + f"/Val_lbl.npy", val_l)
+            np.save(address + f"/Test_img.npy", test_i)
+            np.save(address + f"/Test_lbl.npy", test_l)
             
+        '''
+        self.imgs_path = s+'/Coco/DS1/'+type_+'/Images/'
+        self.lbls_path = s+'/Coco/DS1/'+type_+'/Labels/'
+        self.imgs = os.listdir(self.imgs_path)
+        self.lbls = os.listdir(self.lbls_path)
+        '''
 
     def __getitem__(self,index):
         img=Image.fromarray(self.imgs[index].astype(np.uint8))
