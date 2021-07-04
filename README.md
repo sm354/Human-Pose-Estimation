@@ -1,7 +1,28 @@
 
 # **_Human Pose Estimation_**
 
+## Checkerboard Pattern
 
+*insert some pattern here*
+
+## Checkerboard Dataset
+
+*insert some best samples from the dataset*
+
+## Checkerboard Segmentation
+
+*insert best predictions (with ground truth) here*
+
+
+
+## Requirements
+
+- Python 3.6.10
+- PyTorch version 1.6.0
+- CUDA version 10.1
+- 2 NVIDIA® Tesla® V100(16 GB Memory) GPUs.
+
+## Usage
 
 Image Segmentation is performed on the images where is object which is to be detected is covered by a pattern in all the images.
 
@@ -34,9 +55,8 @@ The model used for training the model is UNet. Multiple models were tried like R
 6. ) ds1.py:
     * This script pastes the patterns on the raw images of `COCO` dataset.
     * To run this script,
-        
+      
             python3 ds1.py -a /path/to/Pattern/folder/ 
-        
 
 ----
 ### **About The Trained Model**:
