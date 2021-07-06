@@ -17,80 +17,64 @@
  1. ) Images
 
 <p align="center" height = "50%">
-    <img width="30%" height = "auto" src="./samples/dataset/sample_img1.jpg">     
-    <img width="30%" height = "auto" src="./samples/dataset/sample_img2.jpg">
-    <img width="30%" height = "auto" src="./samples/dataset/sample_img3.jpg">
-</p>
-<p align="center" height = "50%">
-    <img width="30%" height = "auto" src="./samples/dataset/sample_img4.png">     
-    <img width="30%" height = "auto" src="./samples/dataset/sample_img5.png">
-    <img width="30%" height = "auto" src="./samples/dataset/sample_img6.png">
-</p>
-<p align="center" height = "50%">
-    <img width="30%" height = "auto" src="./samples/dataset/sample_img7.png">     
-    <img width="30%" height = "auto" src="./samples/dataset/sample_img8.png">
+    <img width="128px" height = "auto" src="./samples/dataset/sample_img1.jpg">     
+    <img width="128px" height = "auto" src="./samples/dataset/sample_img2.jpg">
+    <img width="128px" height = "auto" src="./samples/dataset/sample_img3.jpg">
+    <img width="128px" height = "auto" src="./samples/dataset/sample_img4.png">     
+    <img width="128px" height = "auto" src="./samples/dataset/sample_img5.png">
+    <img width="128px" height = "auto" src="./samples/dataset/sample_img6.png">
+    <img width="128px" height = "auto" src="./samples/dataset/sample_img7.png">     
+    <img width="128px" height = "auto" src="./samples/dataset/sample_img8.png">
 </p>
 
 
  2. ) Labels
 
 <p align="center" height = "50%">
-    <img width="30%" height = "auto" src="./samples/dataset/sample_lbl1.jpg">     
-    <img width="30%" height = "auto" src="./samples/dataset/sample_lbl2.jpg">
-    <img width="30%" height = "auto" src="./samples/dataset/sample_lbl3.jpg">
-</p>
-<p align="center" height = "50%">
-    <img width="30%" height = "auto" src="./samples/dataset/sample_lbl4.png">     
-    <img width="30%" height = "auto" src="./samples/dataset/sample_lbl5.png">
-    <img width="30%" height = "auto" src="./samples/dataset/sample_lbl6.png">
-</p>
-<p align="center" height = "50%">
-    <img width="30%" height = "auto" src="./samples/dataset/sample_lbl7.png">     
-    <img width="30%" height = "auto" src="./samples/dataset/sample_lbl8.png">
+    <img width="128px" height = "auto" src="./samples/dataset/sample_lbl1.jpg">     
+    <img width="128px" height = "auto" src="./samples/dataset/sample_lbl2.jpg">
+    <img width="128x" height = "auto" src="./samples/dataset/sample_lbl3.jpg">
+    <img width="128px" height = "auto" src="./samples/dataset/sample_lbl4.png">     
+    <img width="128px" height = "auto" src="./samples/dataset/sample_lbl5.png">
+    <img width="128px" height = "auto" src="./samples/dataset/sample_lbl6.png">
+    <img width="128px" height = "auto" src="./samples/dataset/sample_lbl7.png">     
+    <img width="128px" height = "auto" src="./samples/dataset/sample_lbl8.png">
 </p>
 
 ---
 ## Checkerboard Segmentation
 
 <p align="center" height = "50%">
-    <img width = "30%" src="./samples/Predictions/Prediction_1_img.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_1_lbl.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_1_pred.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_1_img.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_2_img.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_3_img.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_4_img.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_5_img.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_6_img.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_7_img.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_8_img.png">
+    
 </p>
 <p align="center" height = "50%">
-    <img width = "30%" src="./samples/Predictions/Prediction_2_img.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_2_lbl.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_2_pred.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_1_lbl.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_2_lbl.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_3_lbl.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_4_lbl.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_5_lbl.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_6_lbl.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_7_lbl.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_8_lbl.png">
 </p>
 <p align="center" height = "50%">
-    <img width = "30%" src="./samples/Predictions/Prediction_3_img.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_3_lbl.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_3_pred.png">
-</p>
-<p align="center" height = "50%">
-    <img width = "30%" src="./samples/Predictions/Prediction_4_img.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_4_lbl.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_4_pred.png">
-</p>
-<p align="center" height = "50%">
-    <img width = "30%" src="./samples/Predictions/Prediction_5_img.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_5_lbl.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_5_pred.png">
-</p>
-<p align="center" height = "50%">
-    <img width = "30%" src="./samples/Predictions/Prediction_6_img.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_6_lbl.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_6_pred.png">
-</p>
-<p align="center" height = "50%">
-    <img width = "30%" src="./samples/Predictions/Prediction_7_img.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_7_lbl.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_7_pred.png">
-</p>
-<p align="center" height = "50%">
-    <img width = "30%" src="./samples/Predictions/Prediction_8_img.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_8_lbl.png">
-    <img width = "30%" src="./samples/Predictions/Prediction_8_pred.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_1_pred.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_2_pred.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_3_pred.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_4_pred.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_5_pred.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_6_pred.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_7_pred.png">
+    <img width = "128px" src="./samples/Predictions/Prediction_8_pred.png">
+    
 </p>
 
 ## Requirements
