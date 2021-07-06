@@ -1,7 +1,10 @@
-
 # **Human Pose Estimation**
 
+In this work we aim to track body motions in real time using novel dress (called MOCAP suit) and deep learning models. **[Report](./Report.pdf)**
+
 ## *Checkerboard Pattern*
+
+The MOCAP suit is made from the checkerboard pattern. Script to generate can be found [here](./Checkerboard-pattern/arucopp.py).
 
 <p align="center" height = "50%">
     <img width="30%" height = "250px" src="./samples/patterns/sample_pattern1.png">     
@@ -11,6 +14,8 @@
 ---
 
 ## *Checkerboard Dataset*
+
+The dataset to train DL models is created with the help of Coco API. Script to generate can be found [here](./Checkerboard-Dataset/).
 
 **Images**
 
@@ -39,6 +44,8 @@
 
 ---
 ## *Checkerboard Segmentation*
+
+UNet performance is shown below.
 
 **Images**
 
@@ -73,6 +80,8 @@
     <img width = "128px" src="./samples/Predictions/Prediction_4_pred.png">
     <img width = "128px" src="./samples/Predictions/Prediction_5_pred.png">
     <img width = "128px" src="./samples/Predictions/Prediction_6_pred.png">
+
+Segmentation models like UNet can be trained using the created checkerboard data from [here](./Checkerboard-segmentation).
 
 ## Requirements
 
