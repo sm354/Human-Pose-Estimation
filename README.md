@@ -2,7 +2,7 @@
 
 In this work we aim to track body motions in real time using novel dress (called MOCAP suit) and deep learning models. **[Report](./Report.pdf)**
 
-## *Checkerboard Pattern*
+## Checkerboard Pattern
 
 The MOCAP suit is made from the checkerboard pattern. Script to generate can be found [here](./Checkerboard-pattern/arucopp.py).
 
@@ -13,7 +13,7 @@ The MOCAP suit is made from the checkerboard pattern. Script to generate can be 
 </p>
 ---
 
-## *Checkerboard Dataset*
+## Checkerboard Dataset
 
 The dataset to train DL models is created with the help of Coco API. Script to generate can be found [here](./Checkerboard-Dataset/).
 
@@ -43,7 +43,7 @@ The dataset to train DL models is created with the help of Coco API. Script to g
 
 
 ---
-## *Checkerboard Segmentation*
+## Checkerboard Segmentation
 
 UNet performance is shown below.
 
