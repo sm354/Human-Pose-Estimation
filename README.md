@@ -1,6 +1,6 @@
 # **Human Pose Estimation**
 
-In this work we aim to track body motions in real time using novel dress (called MOCAP suit) and deep learning models. Here we briefly mention about how to create the MOCAP suit, how the training dataset is created, and the results obtained using U-Net. **[Report](./Report.pdf)** includes the exact details of the work.
+In this work we aim to track body motions in real time using novel dress (called MOCAP suit) and deep learning models. Here we briefly mention about the MOCAP suit, the checkerboard dataset (we created), and the results obtained using U-Net. **[Report](./Report.pdf)** includes the exact details of the work. This research work was carried out under the guidance of [Prof. Rahul Garg](https://www.cse.iitd.ac.in/~rahulgarg/).
 
 ## [Checkerboard Pattern](./Checkerboard-pattern)
 
