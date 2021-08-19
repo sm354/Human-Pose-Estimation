@@ -1,21 +1,19 @@
 # **Human Pose Estimation**
 
-In this work we aim to track body motions in real time using novel dress (called MOCAP suit) and deep learning models. **[Report](./Report.pdf)**
+In this work we aim to track body motions in real time using novel dress (called MOCAP suit) and deep learning models. Here we briefly mention about how to create the MOCAP suit, how the training dataset is created, and the results obtained using U-Net. **[Report](./Report.pdf)** includes the exact details of the work.
 
-## Checkerboard Pattern
+## [Checkerboard Pattern](./Checkerboard-pattern/arucopp.py)
 
-The MOCAP suit is made from the checkerboard pattern. Script to generate can be found [here](./Checkerboard-pattern/arucopp.py).
+The MOCAP suit is made from the checkerboard pattern. This a pattern created specifically for real-time detection of human joints (points).
 
 <p align="center" height = "50%">
     <img width="30%" height = "250px" src="./samples/patterns/sample_pattern1.png">     
     <img width="30%" height = "250px" src="./samples/patterns/sample_pattern2.png">
     <img width="30%" height = "250px" src="./samples/patterns/sample_pattern3.png">
 </p>
----
+## [Checkerboard Dataset](./Checkerboard-Dataset/)
 
-## Checkerboard Dataset
-
-The dataset to train DL models is created with the help of Coco API. Script to generate can be found [here](./Checkerboard-Dataset/).
+The dataset to train DL models is created with the help of Coco API. We generate around 30,000 samples with good quality checkerboard pattern placed over various class categories like humans, vehicles, animals, etc.
 
 **Images**
 
@@ -40,12 +38,9 @@ The dataset to train DL models is created with the help of Coco API. Script to g
     <img width="128px" height = "auto" src="./samples/dataset/sample_lbl5.png">
     <img width="128px" height = "auto" src="./samples/dataset/sample_lbl6.png">
 </p>
+## [Checkerboard Segmentation](./Checkerboard-segmentation)
 
-
----
-## Checkerboard Segmentation
-
-UNet performance is shown below.
+Different SoTA segmentation models are benchmarked over this dataset. Some predictions of U-Net are shown below. U-Net gives a dice score of **96.7%**.
 
 **Images**
 
@@ -80,9 +75,6 @@ UNet performance is shown below.
     <img width = "128px" src="./samples/Predictions/Prediction_4_pred.png">
     <img width = "128px" src="./samples/Predictions/Prediction_5_pred.png">
     <img width = "128px" src="./samples/Predictions/Prediction_6_pred.png">
-
-Segmentation models like UNet can be trained using the created checkerboard data from [here](./Checkerboard-segmentation).
-
 ## Requirements
 
 - Python 3.6.10
@@ -90,14 +82,3 @@ Segmentation models like UNet can be trained using the created checkerboard data
 - CUDA version 10.1
 - 2 NVIDIA® Tesla® V100(16 GB Memory) GPUs.
 
-## References
-
-1. ) Unet Paper: https://arxiv.org/pdf/1505.04597v1.pdf
-
-2. ) Attention UNet Paper: https://arxiv.org/pdf/1804.03999v3.pdf
-
-3. ) Attention Unet Implementation: https://github.com/bigmb/Unet-Segmentation-Pytorch-Nest-of-Unets
-
-4. ) ResUnet++ Paper: https://arxiv.org/pdf/1911.07067v1.pdf
-
-5. ) ResUnet++ Implementation: https://github.com/rishikksh20/ResUnet
