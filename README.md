@@ -11,6 +11,8 @@ The MOCAP suit is made from the checkerboard pattern. This a pattern created spe
     <img width="30%" height = "250px" src="./samples/patterns/sample_pattern2.png">
     <img width="30%" height = "250px" src="./samples/patterns/sample_pattern3.png">
 </p>
+
+
 ## [Checkerboard Dataset](./Checkerboard-Dataset/)
 
 The dataset to train DL models is created with the help of Coco API. We generate around 30,000 samples with good quality checkerboard pattern placed over various class categories like humans, vehicles, animals, etc.
@@ -38,6 +40,8 @@ The dataset to train DL models is created with the help of Coco API. We generate
     <img width="128px" height = "auto" src="./samples/dataset/sample_lbl5.png">
     <img width="128px" height = "auto" src="./samples/dataset/sample_lbl6.png">
 </p>
+
+
 ## [Checkerboard Segmentation](./Checkerboard-segmentation)
 
 Different SoTA segmentation models are benchmarked over this dataset. Some predictions of U-Net are shown below. U-Net gives a dice score of **96.7%**.
@@ -75,6 +79,8 @@ Different SoTA segmentation models are benchmarked over this dataset. Some predi
     <img width = "128px" src="./samples/Predictions/Prediction_4_pred.png">
     <img width = "128px" src="./samples/Predictions/Prediction_5_pred.png">
     <img width = "128px" src="./samples/Predictions/Prediction_6_pred.png">
+
+
 ## Requirements
 
 - Python 3.6.10
