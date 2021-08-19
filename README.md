@@ -2,7 +2,7 @@
 
 In this work we aim to track body motions in real time using novel dress (called MOCAP suit) and deep learning models. Here we briefly mention about how to create the MOCAP suit, how the training dataset is created, and the results obtained using U-Net. **[Report](./Report.pdf)** includes the exact details of the work.
 
-## [Checkerboard Pattern](./Checkerboard-pattern/arucopp.py)
+## [Checkerboard Pattern](./Checkerboard-pattern)
 
 The MOCAP suit is made from the checkerboard pattern. This a pattern created specifically for real-time detection of human joints (points).
 
@@ -13,7 +13,7 @@ The MOCAP suit is made from the checkerboard pattern. This a pattern created spe
 </p>
 
 
-## [Checkerboard Dataset](./Checkerboard-Dataset/)
+## [Checkerboard Dataset](./CheckerBoard-Dataset/)
 
 The dataset to train DL models is created with the help of Coco API. We generate around 30,000 samples with good quality checkerboard pattern placed over various class categories like humans, vehicles, animals, etc.
 
@@ -42,7 +42,7 @@ The dataset to train DL models is created with the help of Coco API. We generate
 </p>
 
 
-## [Checkerboard Segmentation](./Checkerboard-segmentation)
+## [Checkerboard Segmentation](./Checkerboard-Segmentation)
 
 Different SoTA segmentation models are benchmarked over this dataset. Some predictions of U-Net are shown below. U-Net gives a dice score of **96.7%**.
 
